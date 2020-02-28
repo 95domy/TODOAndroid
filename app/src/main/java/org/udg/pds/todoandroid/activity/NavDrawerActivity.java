@@ -1,6 +1,9 @@
 package org.udg.pds.todoandroid.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -12,11 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.udg.pds.todoandroid.R;
 
 public class NavDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int REQUEST_TEST = 10;
+
+    TextView textView3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +34,22 @@ public class NavDrawerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        textView3 = findViewById(R.id.text_nd);
+        textView3.setText("");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+//                                Toast.makeText(NavDrawerActivity.this, "Hola!", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(NavDrawerActivity.this, TestActivity.class);
+                                startActivityForResult(intent, NavDrawerActivity.REQUEST_TEST);
+                            }
+                        }).show();
             }
         });
 
@@ -42,6 +61,21 @@ public class NavDrawerActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == NavDrawerActivity.REQUEST_TEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                textView3.setText(result);
+                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+            } else {
+                textView3.setText("");
+                Toast.makeText(this, "No result!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
